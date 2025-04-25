@@ -1,7 +1,7 @@
 import "~main.css";
 
-function IndexPopup() {
+function Index() {
   return <div className="container"></div>;
 }
 
-export default IndexPopup;
+export default Index;

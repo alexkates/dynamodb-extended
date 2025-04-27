@@ -21,7 +21,6 @@ export async function saveQuery({ url }: { url: string }) {
 
   queries.unshift(newQuery);
 
-  console.log("About to save queries", queries);
   const storage = getInstance();
   await storage.set(QUERY_KEY, queries);
 }
@@ -29,7 +28,15 @@ export async function saveQuery({ url }: { url: string }) {
 export async function getQueries() {
   const storage = getInstance();
   const queries = await storage.get<Query[]>(QUERY_KEY);
-  console.log("Queries from storage", queries);
 
   return queries || []; // Provide default empty array if no data exists
+}
+
+export async function deleteQuery(query: Query) {
+  const queries = await getQueries();
+
+  const newQueries = queries.filter((q) => q.url !== query.url);
+
+  const storage = getInstance();
+  await storage.set(QUERY_KEY, newQueries);
 }

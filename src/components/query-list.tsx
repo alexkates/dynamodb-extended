@@ -1,5 +1,5 @@
 import type { Query } from "src/types/query";
-import QueryListItem from "./ui/query-list-item";
+import QueryListItem from "./query-list-item";
 
 interface Props {
   queries: Query[] | undefined;

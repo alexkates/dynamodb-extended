@@ -1,7 +1,7 @@
 import type { Query } from "src/types/query";
-import { Card, CardFooter, CardHeader } from "./card";
+import { Card, CardFooter, CardHeader } from "./ui/card";
 import { PlayIcon } from "lucide-react";
-import { Button } from "./button";
+import { Button } from "./ui/button";
 import { updateCurrentTabUrlAndForceReload } from "src/utils/tabs";
 import { parseDynamoDbConsoleUrl } from "src/utils/url";
 

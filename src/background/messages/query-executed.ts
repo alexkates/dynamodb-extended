@@ -5,9 +5,7 @@ import { saveQuery } from "src/db/query";
 const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
   const queryUrl = req.sender.tab.url;
 
-  await saveQuery({
-    url: queryUrl,
-  });
+  await saveQuery(queryUrl);
 
   res.send({
     status: "success",

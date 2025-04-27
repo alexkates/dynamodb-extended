@@ -73,7 +73,7 @@ export default function QueryListItem({ query }: Props) {
             </Button>
 
             <Dialog>
-              <DialogTrigger>
+              <DialogTrigger asChild>
                 <Button variant="destructive" size="icon">
                   <Trash2Icon className="h-4 w-4" />
                 </Button>

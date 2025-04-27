@@ -1,24 +1,37 @@
 import type { Query } from "src/types/query";
 import { Card, CardContent, CardHeader } from "./ui/card";
-import { PlayIcon, Trash2Icon } from "lucide-react";
+import { CheckIcon, PlayIcon, Trash2Icon, XIcon } from "lucide-react";
 import { Button } from "./ui/button";
 import { updateCurrentTabUrlAndForceReload } from "src/utils/tabs";
 import { parseDynamoDbConsoleUrl } from "src/utils/url";
 import LabeledText from "./labeled-text";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
-import { deleteQuery } from "src/db/query";
+import { deleteQuery, updateQuery } from "src/db/query";
+import { useState } from "react";
+import { Input } from "./ui/input";
 
 type Props = {
   query: Query;
 };
 
 export default function QueryListItem({ query }: Props) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [nameValue, setNameValue] = useState(query.name);
+
   async function onRunClicked(query: Query) {
     await updateCurrentTabUrlAndForceReload(query.url);
   }
 
   async function onDeleteClicked(query: Query) {
     await deleteQuery(query);
+  }
+
+  async function saveQueryName() {
+    await updateQuery({
+      ...query,
+      name: nameValue,
+    });
+    setIsEditing(false);
   }
 
   const parsed = parseDynamoDbConsoleUrl(query.url);
@@ -28,7 +41,30 @@ export default function QueryListItem({ query }: Props) {
       <CardHeader>
         <div className="flex justify-between items-center">
           <div className="flex flex-col">
-            <div className="font-medium text-sm">{query.name ?? "A DynamoDB Query"}</div>
+            {isEditing ? (
+              <Input
+                value={nameValue}
+                onChange={(e) => setNameValue(e.target.value)}
+                className="h-4 focus-visible:mb-1"
+                autoFocus
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    saveQueryName();
+                  } else if (e.key === "Escape") {
+                    setIsEditing(false);
+                    setNameValue(query.name);
+                  }
+                }}
+                onBlur={() => {
+                  setIsEditing(false);
+                  setNameValue(query.name);
+                }}
+              />
+            ) : (
+              <div className="font-medium text-base cursor-pointer hover:underline transition-all" onClick={() => setIsEditing(true)}>
+                {query.name}
+              </div>
+            )}
             <div className="text-muted-foreground text-xs lowercase">{new Date(query.createdAt).toLocaleString()}</div>
           </div>
           <div className="flex items-center gap-1">

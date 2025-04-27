@@ -7,7 +7,6 @@ import { parseDynamoDbConsoleUrl } from "src/utils/url";
 import LabeledText from "./labeled-text";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
 import { deleteQuery } from "src/db/query";
-import { useState } from "react";
 
 type Props = {
   query: Query;
@@ -28,7 +27,10 @@ export default function QueryListItem({ query }: Props) {
     <Card key={query.url}>
       <CardHeader>
         <div className="flex justify-between items-center">
-          <LabeledText text={query.name ?? "A DynamoDB Query"} label={new Date(query.createdAt).toLocaleString()} />
+          <div className="flex flex-col">
+            <div className="font-medium text-sm">{query.name ?? "A DynamoDB Query"}</div>
+            <div className="text-muted-foreground text-xs lowercase">{new Date(query.createdAt).toLocaleString()}</div>
+          </div>
           <div className="flex items-center gap-1">
             <Button variant="default" size="icon" onClick={() => onRunClicked(query)}>
               <PlayIcon className="h-4 w-4" />

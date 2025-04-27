@@ -40,3 +40,12 @@ export async function deleteQuery(query: Query) {
   const storage = getInstance();
   await storage.set(QUERY_KEY, newQueries);
 }
+
+export async function updateQuery(query: Query) {
+  const queries = await getQueries();
+
+  const newQueries = queries.map((q) => (q.url === query.url ? { ...q, ...query } : q));
+
+  const storage = getInstance();
+  await storage.set(QUERY_KEY, newQueries);
+}

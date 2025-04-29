@@ -9,40 +9,39 @@ export function parseDynamoDbConsoleUrl(url: string): ParsedDynamoDbUrl | null {
 
     if (!hash.includes("?")) return null;
 
-    const [, queryString] = hash.slice(1).split("?");
+    const queryString = extractQueryString(hash);
     const searchParams = new URLSearchParams(queryString);
 
-    for (const [key, value] of searchParams.entries()) {
-      if (key === "maximize") continue;
+    processSearchParams(searchParams, result);
+    applyDefaultsAndSpecialCases(result);
 
-      if (key === "selectAttribute") {
-        if (result.selectAttribute) {
-          result.selectAttribute = Array.isArray(result.selectAttribute) ? [...result.selectAttribute, value] : [result.selectAttribute, value];
-        } else result.selectAttribute = value;
-        continue;
-      }
-
-      if (
-        key in result ||
-        key === "pk" ||
-        key === "sk" ||
-        key === "skComparator" ||
-        key === "skValue2" ||
-        key === "index" ||
-        key === "select" ||
-        key === "sorting" ||
-        key === "operation" ||
-        key === "table"
-      )
-        (result as any)[key] = value;
-    }
-
-    // Set default operation to "SCAN" if it doesn't exist
-    if (!result.operation) result.operation = "SCAN";
+    return result;
   } catch (error) {
     console.error("Invalid URL:", error);
     return null;
   }
+}
 
-  return result;
+function extractQueryString(hash: string): string {
+  const [, queryString] = hash.slice(1).split("?");
+  return queryString;
+}
+
+function processSearchParams(searchParams: URLSearchParams, result: ParsedDynamoDbUrl): void {
+  const validKeys = ["pk", "sk", "skComparator", "skValue2", "index", "operation", "table"];
+
+  for (const [key, value] of searchParams.entries()) {
+    if (key in result || validKeys.includes(key)) (result as any)[key] = value;
+  }
+}
+
+function applyDefaultsAndSpecialCases(result: ParsedDynamoDbUrl): void {
+  if (!result.operation) result.operation = "SCAN";
+
+  if (result.operation === "SCAN") {
+    result.pk = undefined;
+    result.sk = undefined;
+    result.skComparator = undefined;
+    result.skValue2 = undefined;
+  }
 }

@@ -8,7 +8,4 @@ export type ParsedDynamoDbUrl = {
   skComparator?: SKComparator;
   skValue2?: string;
   index?: string;
-  select?: string;
-  selectAttribute?: string | string[];
-  sorting?: string;
 };

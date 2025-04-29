@@ -9,7 +9,7 @@ import { deleteQuery, updateQuery } from "src/db/query";
 import { useState } from "react";
 import { Input } from "./ui/input";
 import { SKComparator } from "src/types/sk-comparator";
-import QueryListItemQueryProperties from "./query-list-item-query-properties";
+import QueryListItemProperties from "./query-list-item-properties";
 
 type Props = {
   query: Query;
@@ -71,7 +71,7 @@ export default function QueryListItem({ query }: Props) {
         </div>
       </CardHeader>
 
-      <CardContent>
+      <CardContent className="min-h-[140px]">
         {parsed && (
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-1">
@@ -89,7 +89,7 @@ export default function QueryListItem({ query }: Props) {
               <span className="text-sm lowercase truncate max-w-sm">{parsed.index ?? parsed.table}</span>
             </div>
 
-            <QueryListItemQueryProperties query={query} />
+            <QueryListItemProperties query={query} />
           </div>
         )}
       </CardContent>

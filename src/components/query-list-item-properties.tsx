@@ -14,8 +14,8 @@ export default function QueryListItemProperties({ query }: Props) {
 
   return (
     <>
-      {primaryKeyValue && <PropertyItem icon={<KeyRoundIcon className="h-4 w-4" />} value={primaryKeyValue} />}
-      {sortKeyInfo && <PropertyItem icon={<HashIcon className="h-4 w-4" />} value={sortKeyInfo} />}
+      <PropertyItem icon={primaryKeyValue ? <KeyRoundIcon className="h-4 w-4" /> : null} value={primaryKeyValue || ""} />
+      <PropertyItem icon={sortKeyInfo ? <HashIcon className="h-4 w-4" /> : null} value={sortKeyInfo || ""} />
     </>
   );
 }
@@ -23,7 +23,7 @@ export default function QueryListItemProperties({ query }: Props) {
 function PropertyItem({ icon, value }: { icon: React.ReactNode; value: string }) {
   return (
     <div className="flex items-center gap-1">
-      {icon}
+      <div className="w-4 h-4 flex-shrink-0">{icon}</div>
       <span className="text-sm truncate max-w-sm">{value}</span>
     </div>
   );

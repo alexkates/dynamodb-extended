@@ -1,14 +1,42 @@
+import { useState } from "react";
 import type { Query } from "src/types/query";
 import QueryListItem from "./query-list-item";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
 import { updateCurrentTabUrlAndForceReload } from "src/utils/tabs";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
+import { ChevronDown } from "lucide-react";
 
 interface Props {
   queries: Query[] | undefined;
 }
 
+type SortOption = "favorite-date" | "date";
+
+// Function to sort queries based on the selected sort option
+const sortQueries = (queries: Query[], sortOption: SortOption): Query[] => {
+  return [...queries].sort((a, b) => {
+    switch (sortOption) {
+      case "favorite-date":
+        // First sort by favorite status (favorites first)
+        if (a.favorite && !b.favorite) return -1;
+        if (!a.favorite && b.favorite) return 1;
+        // Then sort by createdAt date (newest first)
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+
+      case "date":
+        // Sort by createdAt date only (newest first)
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+
+      default:
+        return 0;
+    }
+  });
+};
+
 export default function QueryList({ queries }: Props) {
+  const [sortOption, setSortOption] = useState<SortOption>("favorite-date");
+
   if (!queries || queries.length === 0) {
     function onGetStartedClicked() {
       updateCurrentTabUrlAndForceReload("https://console.aws.amazon.com/dynamodbv2/home");
@@ -34,11 +62,39 @@ export default function QueryList({ queries }: Props) {
     );
   }
 
+  const sortedQueries = sortQueries(queries, sortOption);
+
+  const sortOptions = [
+    { value: "favorite-date", label: "Favorites First" },
+    { value: "date", label: "Date" },
+  ];
+
+  const selectedOption = sortOptions.find((option) => option.value === sortOption);
+
   return (
-    <div className="flex flex-col gap-2 py-2">
-      {queries.map((query) => (
-        <QueryListItem key={query.url} query={query} />
-      ))}
+    <div className="flex flex-col gap-2">
+      <div className="flex justify-end p-2">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="sm" className="gap-1">
+              Sort by: {selectedOption?.label}
+              <ChevronDown className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            {sortOptions.map((option) => (
+              <DropdownMenuItem key={option.value} onClick={() => setSortOption(option.value as SortOption)}>
+                {option.label}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+      <div className="flex flex-col gap-2 py-2">
+        {sortedQueries.map((query) => (
+          <QueryListItem key={query.url} query={query} />
+        ))}
+      </div>
     </div>
   );
 }

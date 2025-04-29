@@ -21,6 +21,7 @@ export async function saveQuery(url: string) {
     url,
     createdAt: Date.now(),
     name: "A DynamoDB Query",
+    favorite: false,
   };
 
   queries.unshift(newQuery);

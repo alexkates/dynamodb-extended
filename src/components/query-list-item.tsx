@@ -1,6 +1,6 @@
 import type { Query } from "src/types/query";
 import { Card, CardContent, CardFooter, CardHeader } from "./ui/card";
-import { DatabaseIcon, EqualIcon, HashIcon, KeyRoundIcon, PlayIcon, SortDescIcon, SquareFunctionIcon, TablePropertiesIcon, Trash2Icon } from "lucide-react";
+import { DatabaseIcon, EqualIcon, HashIcon, KeyRoundIcon, PlayIcon, SortDescIcon, SquareFunctionIcon, StarIcon, TablePropertiesIcon, Trash2Icon } from "lucide-react";
 import { Button } from "./ui/button";
 import { updateCurrentTabUrlAndForceReload } from "src/utils/tabs";
 import { parseDynamoDbConsoleUrl } from "src/utils/url";
@@ -35,12 +35,19 @@ export default function QueryListItem({ query }: Props) {
     setIsEditing(false);
   }
 
+  async function onFavoriteClicked(query: Query) {
+    await updateQuery({
+      ...query,
+      favorite: !query.favorite,
+    });
+  }
+
   const parsed = parseDynamoDbConsoleUrl(query.url);
 
   return (
     <Card key={query.url}>
       <CardHeader>
-        <div className="flex justify-between items-center">
+        <div className="flex items-center justify-between">
           <div className="flex flex-col">
             {isEditing ? (
               <Input
@@ -68,10 +75,11 @@ export default function QueryListItem({ query }: Props) {
             )}
             <div className="text-muted-foreground text-xs lowercase">{new Date(query.createdAt).toLocaleString()}</div>
           </div>
+          <StarIcon className="" fill={query.favorite ? "black" : "none"} onClick={async () => await onFavoriteClicked(query)} />
         </div>
       </CardHeader>
 
-      <CardContent className="min-h-[140px]">
+      <CardContent className="">
         {parsed && (
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-1">

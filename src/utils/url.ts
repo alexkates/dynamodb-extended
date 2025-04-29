@@ -36,6 +36,9 @@ export function parseDynamoDbConsoleUrl(url: string): ParsedDynamoDbUrl | null {
       )
         (result as any)[key] = value;
     }
+
+    // Set default operation to "SCAN" if it doesn't exist
+    if (!result.operation) result.operation = "SCAN";
   } catch (error) {
     console.error("Invalid URL:", error);
     return null;

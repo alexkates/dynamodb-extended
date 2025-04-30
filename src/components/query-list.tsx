@@ -53,7 +53,7 @@ export default function QueryList({ queries }: Props) {
             <p>To get started, simply open your DynamoDB Console and run queries as you normally would. Your query history will appear here automatically.</p>
           </CardContent>
           <CardFooter>
-            <Button variant="default" size="lg" onClick={() => onGetStartedClicked()}>
+            <Button variant="default" size="lg" onClick={onGetStartedClicked}>
               Start Querying
             </Button>
           </CardFooter>

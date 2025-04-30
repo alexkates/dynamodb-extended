@@ -75,7 +75,7 @@ export default function QueryListItem({ query }: Props) {
             )}
             <div className="text-muted-foreground text-xs lowercase">{new Date(query.createdAt).toLocaleString()}</div>
           </div>
-          <StarIcon className="" fill={query.favorite ? "black" : "none"} onClick={async () => await onFavoriteClicked(query)} />
+          <StarIcon className="cursor-pointer" fill={query.favorite ? "black" : "none"} onClick={async () => await onFavoriteClicked(query)} />
         </div>
       </CardHeader>
 

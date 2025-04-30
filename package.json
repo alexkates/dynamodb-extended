@@ -44,7 +44,7 @@
   },
   "manifest": {
     "host_permissions": [
-      "https://*/*"
+      "https://*.console.aws.amazon.com/dynamodbv2/*"
     ]
   }
 }

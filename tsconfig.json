@@ -4,5 +4,6 @@
   "include": [".plasmo/index.d.ts", "./**/*.ts", "./**/*.tsx"],
   "compilerOptions": {
     "baseUrl": ".",
+    "strict": true,
   },
 }

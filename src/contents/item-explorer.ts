@@ -5,7 +5,7 @@ import { sendToBackground } from "@plasmohq/messaging";
 import { waitForRunButton } from "src/poms/item-explorer";
 
 export const config: PlasmoCSConfig = {
-  matches: ["<all_urls>"],
+  matches: ["https://*.console.aws.amazon.com/dynamodbv2/*"],
   all_frames: true,
 };
 
@@ -14,17 +14,11 @@ initialize().then(() => {
 });
 
 async function initialize() {
-  try {
-    const runButton = await waitForRunButton();
+  const runButton = await waitForRunButton();
 
-    runButton.addEventListener("click", async () => {
-      const response = await sendToBackground({
-        name: "query-executed",
-      });
-
-      console.log("Response from background script:", response);
+  runButton?.addEventListener("click", async () => {
+    const response = await sendToBackground({
+      name: "query-executed",
     });
-  } catch (error) {
-    console.error("Failed to find run button:", error);
-  }
+  });
 }

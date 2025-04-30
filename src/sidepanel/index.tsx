@@ -8,7 +8,7 @@ function Index() {
   const [queries] = useStorage<Query[]>(QUERY_KEY);
 
   return (
-    <div className="container">
+    <div className="container py-2">
       <QueryList queries={queries} />
     </div>
   );

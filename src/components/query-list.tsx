@@ -5,19 +5,19 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "./ui/button";
 import { updateCurrentTabUrlAndForceReload } from "src/utils/tabs";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu";
-import { ChevronDown } from "lucide-react";
+import { CalendarIcon, ChevronDown, StarIcon } from "lucide-react";
 
 interface Props {
   queries: Query[] | undefined;
 }
 
-type SortOption = "favorite-date" | "date";
+type SortOption = "favorites" | "date";
 
 // Function to sort queries based on the selected sort option
 const sortQueries = (queries: Query[], sortOption: SortOption): Query[] => {
   return [...queries].sort((a, b) => {
     switch (sortOption) {
-      case "favorite-date":
+      case "favorites":
         // First sort by favorite status (favorites first)
         if (a.favorite && !b.favorite) return -1;
         if (!a.favorite && b.favorite) return 1;
@@ -35,7 +35,7 @@ const sortQueries = (queries: Query[], sortOption: SortOption): Query[] => {
 };
 
 export default function QueryList({ queries }: Props) {
-  const [sortOption, setSortOption] = useState<SortOption>("favorite-date");
+  const [sortOption, setSortOption] = useState<SortOption>("favorites");
 
   if (!queries || queries.length === 0) {
     function onGetStartedClicked() {
@@ -65,8 +65,24 @@ export default function QueryList({ queries }: Props) {
   const sortedQueries = sortQueries(queries, sortOption);
 
   const sortOptions = [
-    { value: "favorite-date", label: "Favorites First" },
-    { value: "date", label: "Date" },
+    {
+      value: "favorites",
+      label: (
+        <div className="flex items-center gap-1">
+          <StarIcon className="h-4 w-4" />
+          <span className="text-sm">Favorites</span>
+        </div>
+      ),
+    },
+    {
+      value: "date",
+      label: (
+        <div className="flex items-center gap-1">
+          <CalendarIcon className="h-4 w-4" />
+          <span className="text-sm">Date</span>
+        </div>
+      ),
+    },
   ];
 
   const selectedOption = sortOptions.find((option) => option.value === sortOption);
@@ -77,7 +93,7 @@ export default function QueryList({ queries }: Props) {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" size="sm" className="gap-1">
-              Sort by: {selectedOption?.label}
+              {selectedOption?.label}
               <ChevronDown className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>

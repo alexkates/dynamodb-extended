@@ -9,16 +9,14 @@ export const config: PlasmoCSConfig = {
   all_frames: true,
 };
 
-initialize().then(() => {
-  console.log("Item Explorer content script loaded");
-});
+initialize();
 
 async function initialize() {
   const runButton = await waitForRunButton();
 
-  runButton?.addEventListener("click", async () => {
-    const response = await sendToBackground({
-      name: "query-executed",
-    });
-  });
+  runButton?.addEventListener("click", onRunClicked);
+}
+
+async function onRunClicked() {
+  await sendToBackground({ name: "query-executed" });
 }

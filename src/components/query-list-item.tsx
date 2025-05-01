@@ -1,6 +1,6 @@
 import type { Query } from "src/types/query";
 import { Card, CardContent, CardFooter, CardHeader } from "./ui/card";
-import { DatabaseIcon, EqualIcon, HashIcon, KeyRoundIcon, PlayIcon, SortDescIcon, SquareFunctionIcon, StarIcon, TablePropertiesIcon, Trash2Icon } from "lucide-react";
+import { DatabaseIcon, PlayIcon, SquareFunctionIcon, StarIcon, TablePropertiesIcon, Trash2Icon } from "lucide-react";
 import { Button } from "./ui/button";
 import { updateCurrentTabUrlAndForceReload } from "src/utils/tabs";
 import { parseDynamoDbConsoleUrl } from "src/utils/url";
@@ -8,8 +8,8 @@ import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, Di
 import { deleteQuery, updateQuery } from "src/db/query";
 import { useState } from "react";
 import { Input } from "./ui/input";
-import { SKComparator } from "src/types/sk-comparator";
 import QueryListItemProperties from "./query-list-item-properties";
+import { cn } from "src/utils";
 
 type Props = {
   query: Query;
@@ -75,7 +75,10 @@ export default function QueryListItem({ query }: Props) {
             )}
             <div className="text-muted-foreground text-xs lowercase">{new Date(query.createdAt).toLocaleString()}</div>
           </div>
-          <StarIcon className="cursor-pointer" fill={query.favorite ? "black" : "none"} onClick={async () => await onFavoriteClicked(query)} />
+          <StarIcon
+            className={cn("h-5 w-5 transition-all cursor-pointer", query.favorite ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground")}
+            onClick={async () => await onFavoriteClicked(query)}
+          />
         </div>
       </CardHeader>
 

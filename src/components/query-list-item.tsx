@@ -48,41 +48,72 @@ export default function QueryListItem({ query }: Props) {
     <Card key={query.url}>
       <CardHeader>
         <div className="flex items-center justify-between">
-          <div className="flex flex-col">
-            {isEditing ? (
-              <Input
-                value={nameValue}
-                onChange={(e) => setNameValue(e.target.value)}
-                className="h-4 focus-visible:mb-1"
-                autoFocus
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    saveQueryName();
-                  } else if (e.key === "Escape") {
+          <div className="flex items-center gap-2">
+            <StarIcon
+              className={cn("h-5 w-5 transition-all cursor-pointer", query.favorite ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground")}
+              onClick={async () => await onFavoriteClicked(query)}
+            />
+            <div className="flex flex-col">
+              {isEditing ? (
+                <Input
+                  value={nameValue}
+                  onChange={(e) => setNameValue(e.target.value)}
+                  className="h-4 focus-visible:mb-1"
+                  autoFocus
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      saveQueryName();
+                    } else if (e.key === "Escape") {
+                      setIsEditing(false);
+                      setNameValue(query.name);
+                    }
+                  }}
+                  onBlur={() => {
                     setIsEditing(false);
                     setNameValue(query.name);
-                  }
-                }}
-                onBlur={() => {
-                  setIsEditing(false);
-                  setNameValue(query.name);
-                }}
-              />
-            ) : (
-              <div className="font-medium text-base cursor-pointer hover:underline transition-all" onClick={() => setIsEditing(true)}>
-                {query.name}
-              </div>
-            )}
-            <div className="text-muted-foreground text-xs lowercase">{new Date(query.createdAt).toLocaleString()}</div>
+                  }}
+                />
+              ) : (
+                <div className="font-medium text-base cursor-pointer hover:underline transition-all" onClick={() => setIsEditing(true)}>
+                  {query.name}
+                </div>
+              )}
+              <div className="text-muted-foreground text-xs lowercase">{new Date(query.createdAt).toLocaleString()}</div>
+            </div>
           </div>
-          <StarIcon
-            className={cn("h-5 w-5 transition-all cursor-pointer", query.favorite ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground")}
-            onClick={async () => await onFavoriteClicked(query)}
-          />
+          <div className="flex items-center gap-2">
+            <Button variant="default" size="icon" onClick={() => onRunClicked(query)}>
+              <PlayIcon className="h-4 w-4" />
+            </Button>
+
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="destructive" size="icon">
+                  <Trash2Icon className="h-4 w-4" />
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Are you absolutely sure?</DialogTitle>
+                  <DialogDescription>This action cannot be undone. This will permanently delete the query.</DialogDescription>
+                </DialogHeader>
+                <DialogFooter>
+                  <DialogClose asChild>
+                    <Button variant="secondary">Cancel</Button>
+                  </DialogClose>
+                  <DialogClose asChild>
+                    <Button variant="destructive" onClick={async () => await onDeleteClicked(query)}>
+                      Delete
+                    </Button>
+                  </DialogClose>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </div>
         </div>
       </CardHeader>
 
-      <CardContent className="">
+      <CardContent>
         {parsed && (
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-1">
@@ -104,38 +135,6 @@ export default function QueryListItem({ query }: Props) {
           </div>
         )}
       </CardContent>
-
-      <CardFooter>
-        <div className="flex items-center gap-1 w-full justify-end">
-          <Button variant="default" size="icon" onClick={() => onRunClicked(query)}>
-            <PlayIcon className="h-4 w-4" />
-          </Button>
-
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button variant="destructive" size="icon">
-                <Trash2Icon className="h-4 w-4" />
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Are you absolutely sure?</DialogTitle>
-                <DialogDescription>This action cannot be undone. This will permanently delete the query.</DialogDescription>
-              </DialogHeader>
-              <DialogFooter>
-                <DialogClose asChild>
-                  <Button variant="secondary">Cancel</Button>
-                </DialogClose>
-                <DialogClose asChild>
-                  <Button variant="destructive" onClick={async () => await onDeleteClicked(query)}>
-                    Delete
-                  </Button>
-                </DialogClose>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        </div>
-      </CardFooter>
     </Card>
   );
 }

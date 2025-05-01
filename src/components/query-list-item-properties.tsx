@@ -14,8 +14,8 @@ export default function QueryListItemProperties({ query }: Props) {
 
   return (
     <>
-      <PropertyItem icon={primaryKeyValue ? <KeyRoundIcon className="h-4 w-4" /> : null} value={primaryKeyValue || ""} />
-      <PropertyItem icon={sortKeyInfo ? <HashIcon className="h-4 w-4" /> : null} value={sortKeyInfo || ""} />
+      {primaryKeyValue && <PropertyItem icon={<KeyRoundIcon className="h-4 w-4" />} value={primaryKeyValue} />}
+      {sortKeyInfo && <PropertyItem icon={<HashIcon className="h-4 w-4" />} value={sortKeyInfo} />}
     </>
   );
 }

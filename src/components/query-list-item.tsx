@@ -1,6 +1,6 @@
 import type { Query } from "src/types/query";
 import { Card, CardContent, CardFooter, CardHeader } from "./ui/card";
-import { DatabaseIcon, PlayIcon, SquareFunctionIcon, StarIcon, TablePropertiesIcon, Trash2Icon } from "lucide-react";
+import { BadgeInfoIcon, DatabaseIcon, Info, PlayIcon, SquareFunctionIcon, StarIcon, TablePropertiesIcon, Trash2Icon } from "lucide-react";
 import { Button } from "./ui/button";
 import { updateCurrentTabUrlAndForceReload } from "src/utils/tabs";
 import { parseDynamoDbConsoleUrl } from "src/utils/url";
@@ -10,6 +10,7 @@ import { useState } from "react";
 import { Input } from "./ui/input";
 import QueryListItemProperties from "./query-list-item-properties";
 import { cn } from "src/utils";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
 
 type Props = {
   query: Query;
@@ -49,10 +50,6 @@ export default function QueryListItem({ query }: Props) {
       <CardHeader>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <StarIcon
-              className={cn("h-5 w-5 transition-all cursor-pointer", query.favorite ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground")}
-              onClick={async () => await onFavoriteClicked(query)}
-            />
             <div className="flex flex-col">
               {isEditing ? (
                 <Input
@@ -74,24 +71,98 @@ export default function QueryListItem({ query }: Props) {
                   }}
                 />
               ) : (
-                <div className="font-medium text-base cursor-pointer hover:underline transition-all" onClick={() => setIsEditing(true)}>
-                  {query.name}
-                </div>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="font-medium text-base cursor-pointer hover:underline transition-all" onClick={() => setIsEditing(true)}>
+                        {query.name}
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <span>Click to edit query name</span>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               )}
               <div className="text-muted-foreground text-xs lowercase">{new Date(query.createdAt).toLocaleString()}</div>
             </div>
+            <div className="flex items-center gap-1">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <StarIcon
+                      className={cn("h-5 w-5 transition-all cursor-pointer", query.favorite ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground")}
+                      onClick={async () => await onFavoriteClicked(query)}
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <span>{query.favorite ? "Remove from favorites" : "Add to favorites"}</span>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <BadgeInfoIcon className="h-4 w-4" />
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-md">
+                    {parsed ? (
+                      <div className="flex flex-col gap-2">
+                        <span className="text-sm font-semibold ">Query Details</span>
+                        <div className="flex items-center gap-1">
+                          <DatabaseIcon className="h-4 w-4" />
+                          <span className="text-sm truncate max-w-sm">{parsed.table}</span>
+                        </div>
+
+                        <div className="flex items-center gap-1">
+                          <SquareFunctionIcon className="h-4 w-4" />
+                          <span className="text-sm lowercase">{parsed.operation}</span>
+                        </div>
+
+                        <div className="flex items-center gap-1">
+                          <TablePropertiesIcon className="h-4 w-4" />
+                          <span className="text-sm lowercase truncate max-w-sm">{parsed.index ?? parsed.table}</span>
+                        </div>
+
+                        <QueryListItemProperties query={query} />
+                      </div>
+                    ) : (
+                      <span className="text-sm text-muted-foreground">No additional query details</span>
+                    )}
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="default" size="icon" onClick={() => onRunClicked(query)}>
-              <PlayIcon className="h-4 w-4" />
-            </Button>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="default" size="icon" onClick={() => onRunClicked(query)}>
+                    <PlayIcon className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <span>Run query</span>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
 
             <Dialog>
-              <DialogTrigger asChild>
-                <Button variant="destructive" size="icon">
-                  <Trash2Icon className="h-4 w-4" />
-                </Button>
-              </DialogTrigger>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <DialogTrigger asChild>
+                      <Button variant="destructive" size="icon">
+                        <Trash2Icon className="h-4 w-4" />
+                      </Button>
+                    </DialogTrigger>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <span>Delete query</span>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Are you absolutely sure?</DialogTitle>
@@ -112,29 +183,6 @@ export default function QueryListItem({ query }: Props) {
           </div>
         </div>
       </CardHeader>
-
-      <CardContent>
-        {parsed && (
-          <div className="flex flex-col gap-2">
-            <div className="flex items-center gap-1">
-              <DatabaseIcon className="h-4 w-4" />
-              <span className="text-sm truncate max-w-sm">{parsed.table}</span>
-            </div>
-
-            <div className="flex items-center gap-1">
-              <SquareFunctionIcon className="h-4 w-4" />
-              <span className="text-sm lowercase">{parsed.operation}</span>
-            </div>
-
-            <div className="flex items-center gap-1">
-              <TablePropertiesIcon className="h-4 w-4" />
-              <span className="text-sm lowercase truncate max-w-sm">{parsed.index ?? parsed.table}</span>
-            </div>
-
-            <QueryListItemProperties query={query} />
-          </div>
-        )}
-      </CardContent>
     </Card>
   );
 }

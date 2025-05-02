@@ -24,7 +24,7 @@ function PropertyItem({ icon, value }: { icon: React.ReactNode; value: string })
   return (
     <div className="flex items-center gap-1">
       <div className="w-4 h-4 flex-shrink-0">{icon}</div>
-      <span className="text-sm truncate max-w-sm">{value}</span>
+      <span className="text-sm truncate max-w-lg">{value}</span>
     </div>
   );
 }

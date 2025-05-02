@@ -5,15 +5,14 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "./ui/button";
 import { updateCurrentTabUrlAndForceReload } from "src/utils/tabs";
 import { sortQueries } from "src/utils/sort";
-import type { SortOption } from "src/types/sort-option";
-import QuerySortDropdown from "./query-sort-dropdown";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "./ui/tabs";
 
 interface Props {
   queries: Query[] | undefined;
 }
 
 export default function QueryList({ queries }: Props) {
-  const [sortOption, setSortOption] = useState<SortOption>("favorites");
+  const [activeTab, setActiveTab] = useState<"recent" | "favorites">("recent");
 
   if (!queries || queries.length === 0) {
     function onGetStartedClicked() {
@@ -40,16 +39,35 @@ export default function QueryList({ queries }: Props) {
     );
   }
 
-  const sortedQueries = sortQueries(queries, sortOption);
+  const recentQueries = sortQueries(queries, "date");
+  const favoriteQueries = queries.filter((query) => query.favorite);
 
   return (
     <div className="flex flex-col gap-2">
-      <QuerySortDropdown sortOption={sortOption} onSortChange={setSortOption} />
-      <div className="flex flex-col gap-2">
-        {sortedQueries.map((query) => (
-          <QueryListItem key={query.url} query={query} />
-        ))}
-      </div>
+      <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "recent" | "favorites")}>
+        <TabsList className="w-full">
+          <TabsTrigger value="recent" className="flex-1">
+            Recent
+          </TabsTrigger>
+          <TabsTrigger value="favorites" className="flex-1">
+            Favorites
+          </TabsTrigger>
+        </TabsList>
+        <TabsContent value="recent">
+          <div className="flex flex-col gap-2">
+            {recentQueries.map((query) => (
+              <QueryListItem key={query.url} query={query} />
+            ))}
+          </div>
+        </TabsContent>
+        <TabsContent value="favorites">
+          <div className="flex flex-col gap-2">
+            {favoriteQueries.map((query) => (
+              <QueryListItem key={query.url} query={query} />
+            ))}
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

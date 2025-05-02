@@ -134,55 +134,57 @@ export default function QueryListItem({ query }: Props) {
               </TooltipProvider>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+        </div>
+      </CardHeader>
+      <CardFooter>
+        <div className="flex items-center gap-2">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="default" size="icon" onClick={() => onRunClicked(query)}>
+                  <PlayIcon className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <span>Run query</span>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+
+          <Dialog>
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button variant="default" size="icon" onClick={() => onRunClicked(query)}>
-                    <PlayIcon className="h-4 w-4" />
-                  </Button>
+                  <DialogTrigger asChild>
+                    <Button variant="destructive" size="icon">
+                      <Trash2Icon className="h-4 w-4" />
+                    </Button>
+                  </DialogTrigger>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <span>Run query</span>
+                  <span>Delete query</span>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
-
-            <Dialog>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <DialogTrigger asChild>
-                      <Button variant="destructive" size="icon">
-                        <Trash2Icon className="h-4 w-4" />
-                      </Button>
-                    </DialogTrigger>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <span>Delete query</span>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Are you absolutely sure?</DialogTitle>
-                  <DialogDescription>This action cannot be undone. This will permanently delete the query.</DialogDescription>
-                </DialogHeader>
-                <DialogFooter>
-                  <DialogClose asChild>
-                    <Button variant="secondary">Cancel</Button>
-                  </DialogClose>
-                  <DialogClose asChild>
-                    <Button variant="destructive" onClick={async () => await onDeleteClicked(query)}>
-                      Delete
-                    </Button>
-                  </DialogClose>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
-          </div>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Are you absolutely sure?</DialogTitle>
+                <DialogDescription>This action cannot be undone. This will permanently delete the query.</DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button variant="secondary">Cancel</Button>
+                </DialogClose>
+                <DialogClose asChild>
+                  <Button variant="destructive" onClick={async () => await onDeleteClicked(query)}>
+                    Delete
+                  </Button>
+                </DialogClose>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
-      </CardHeader>
+      </CardFooter>
     </Card>
   );
 }

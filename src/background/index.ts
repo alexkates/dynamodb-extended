@@ -1,3 +1,6 @@
+import { saveOption } from "src/db/option";
+import { OptionKey, type Option } from "src/types/option";
+
 chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true }).catch((error) => console.error(error));
 
 // Function to handle DynamoDB URL checking and side panel setup
@@ -27,4 +30,19 @@ chrome.tabs.onUpdated.addListener(async (tabId, _info, tab) => {
 chrome.tabs.onActivated.addListener(async (activeInfo) => {
   const tab = await chrome.tabs.get(activeInfo.tabId);
   await setupSidePanelForTab(activeInfo.tabId, tab.url);
+});
+
+chrome.runtime.onInstalled.addListener(() => {
+  const defaultOptions: Option[] = [
+    {
+      key: OptionKey.UNMARSHALLED_JSON,
+      value: "false",
+      name: "Unmarshalled JSON",
+      description: "Changes the default DynamoDB Edit Item screen to unmarshalled JSON.",
+    },
+  ];
+
+  defaultOptions.forEach(async (option) => {
+    await saveOption(option);
+  });
 });

@@ -6,12 +6,12 @@ import { filterQueryByFavorite } from "src/utils/filter";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
 
 interface Props {
-  queries: Query[];
+  queries?: Query[];
 }
 
 export default function QueryList({ queries }: Props) {
   const [activeTab, setActiveTab] = useState<"recent" | "favorites">("recent");
-  const favoriteQueries = queries.filter(filterQueryByFavorite);
+  const favoriteQueries = queries?.filter(filterQueryByFavorite);
 
   return (
     <div className="flex flex-col gap-2">
@@ -25,7 +25,7 @@ export default function QueryList({ queries }: Props) {
           </TabsTrigger>
         </TabsList>
         <TabsContent value="recent">
-          {queries.length === 0 ? (
+          {!queries?.length ? (
             <Card>
               <CardHeader>
                 <CardTitle>Recent Queries</CardTitle>
@@ -34,15 +34,11 @@ export default function QueryList({ queries }: Props) {
               <CardContent>To get started, run a query from DynamoDB. Your run queries will begin appearing here.</CardContent>
             </Card>
           ) : (
-            <div className="flex flex-col gap-2">
-              {queries.map((query) => (
-                <QueryListItem key={query.url} query={query} />
-              ))}
-            </div>
+            <div className="flex flex-col gap-2">{queries?.map((query) => <QueryListItem key={query.url} query={query} />)}</div>
           )}
         </TabsContent>
         <TabsContent value="favorites">
-          {favoriteQueries.length === 0 ? (
+          {!favoriteQueries?.length ? (
             <Card>
               <CardHeader>
                 <CardTitle>Favorites</CardTitle>
@@ -51,11 +47,7 @@ export default function QueryList({ queries }: Props) {
               <CardContent>To favorite a query, click the star icon on the query card.</CardContent>
             </Card>
           ) : (
-            <div className="flex flex-col gap-2">
-              {favoriteQueries.map((query) => (
-                <QueryListItem key={query.url} query={query} />
-              ))}
-            </div>
+            <div className="flex flex-col gap-2">{favoriteQueries?.map((query) => <QueryListItem key={query.url} query={query} />)}</div>
           )}
         </TabsContent>
       </Tabs>

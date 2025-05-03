@@ -8,8 +8,7 @@ import { sortQueryByDate } from "src/utils/sort";
 function Index() {
   const [queries] = useStorage<Query[]>(QUERY_KEY);
 
-  if (!queries) return null;
-  queries.sort(sortQueryByDate);
+  queries?.sort(sortQueryByDate);
 
   return (
     <div className="container flex flex-col py-2 gap-2">

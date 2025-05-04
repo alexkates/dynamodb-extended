@@ -29,9 +29,6 @@ function Index() {
             <CardTitle>
               <Skeleton className="h-6 w-1/2" />
             </CardTitle>
-            <CardDescription>
-              <Skeleton className="h-4 w-full" />
-            </CardDescription>
           </CardHeader>
           <CardContent>
             <Skeleton className="h-6 w-full" />
@@ -43,9 +40,6 @@ function Index() {
             <CardTitle>
               <Skeleton className="h-6 w-1/2" />
             </CardTitle>
-            <CardDescription>
-              <Skeleton className="h-4 w-full" />
-            </CardDescription>
           </CardHeader>
           <CardContent>
             <Skeleton className="h-6 w-full" />

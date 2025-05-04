@@ -14,8 +14,14 @@ function getInstance() {
 export async function saveOption(option: Option) {
   const options = await getOptions();
 
-  const optionExists = options.some((o) => o.key === option.key);
-  if (optionExists) return;
+  const existingOption = options.find((o) => o.key === option.key);
+  if (existingOption) {
+    // If the option already exists, update its name and description, allowing me to change them while keeping the user's value.
+    existingOption.name = option.name;
+    existingOption.description = option.description;
+    await updateOption(existingOption);
+    return;
+  }
 
   options.unshift(option);
 

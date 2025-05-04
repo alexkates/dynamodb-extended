@@ -10,16 +10,13 @@ function Index() {
   const [options, setOptions] = useStorage<Option[]>(OPTION_KEY);
 
   async function onOptionChanged(option: Option) {
-    // Create a new option object with the toggled value
     const updatedOption = {
       ...option,
       value: !option.value,
     };
 
-    // Update in database
     await updateOption(updatedOption);
 
-    // Update local state to reflect the change immediately
     if (options) {
       const newOptions = options.map((opt) => (opt.key === updatedOption.key ? updatedOption : opt));
       setOptions(newOptions);

@@ -7,3 +7,7 @@ export async function waitForJsonViewButton() {
 export async function waitForViewDynamoDBJsonButton() {
   return waitForElement<HTMLButtonElement>('section[data-testid="ItemEditorContainer"] input[type="checkbox"]');
 }
+
+export async function waitForItemEditorResizeDiv() {
+  return waitForElement<HTMLDivElement>('section[data-testid="ItemEditorContainer"] div[class*="resizable-box"]');
+}

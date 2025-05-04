@@ -33,7 +33,13 @@ export async function getOptions() {
   const storage = getInstance();
   const options = await storage.get<Option[]>(OPTION_KEY);
 
-  return options || []; // Provide default empty array if no data exists
+  return options || [];
+}
+
+export async function getOption(key: OptionKey) {
+  const options = await getOptions();
+
+  return options.find((o) => o.key === key);
 }
 
 export async function updateOption(option: Option) {

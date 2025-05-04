@@ -27,7 +27,7 @@ function Index() {
   }
 
   return (
-    <div className="container flex flex-col py-2 gap-2">
+    <div className="container flex flex-col py-8 gap-4">
       <h1 className="text-3xl font-semibold">DynamoDB Extended Options</h1>
       {options?.map((option) => (
         <Card key={option.key}>

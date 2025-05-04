@@ -6,7 +6,6 @@ import QueryList from "src/components/query-list";
 import { sortQueryByDate } from "src/utils/sort";
 import { Button } from "src/components/ui/button";
 import { Settings } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "src/components/ui/tooltip";
 
 function Index() {
   const [queries] = useStorage<Query[]>(QUERY_KEY);
@@ -20,19 +19,11 @@ function Index() {
   return (
     <div className="container flex flex-col py-8 gap-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-semibold">DynamoDB Extended</h1>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="ghost" onClick={onSettingsClicked}>
-                <Settings />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <span>Click to open options</span>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        <h1 className="text-lg font-semibold">DynamoDB Extended</h1>
+        <Button variant="ghost" onClick={onSettingsClicked} size={"sm"}>
+          <Settings className="mr-2 h-4 w-4" />
+          Settings
+        </Button>
       </div>
       <QueryList queries={queries} />
     </div>

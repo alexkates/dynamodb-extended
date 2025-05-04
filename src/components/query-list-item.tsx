@@ -1,16 +1,13 @@
 import type { Query } from "src/types/query";
-import { Card, CardFooter, CardHeader, CardContent } from "./ui/card";
-import { DatabaseIcon, PlayIcon, SquareFunctionIcon, StarIcon, TablePropertiesIcon, Trash2Icon } from "lucide-react";
-import { Button } from "./ui/button";
-import { updateCurrentTabUrlAndForceReload } from "src/utils/tabs";
+import { Card, CardHeader, CardContent } from "./ui/card";
+import { DatabaseIcon, SquareFunctionIcon, TablePropertiesIcon } from "lucide-react";
 import { parseDynamoDbConsoleUrl } from "src/utils/url";
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
-import { deleteQuery, updateQuery } from "src/db/query";
+import { updateQuery } from "src/db/query";
 import { useState } from "react";
 import { Input } from "./ui/input";
 import QueryListItemProperties from "./query-list-item-properties";
-import { cn } from "src/utils";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
+import { QueryListItemButtonGroup } from "./query-list-item-button-group";
 
 type Props = {
   query: Query;
@@ -20,27 +17,12 @@ export default function QueryListItem({ query }: Props) {
   const [isEditing, setIsEditing] = useState(false);
   const [nameValue, setNameValue] = useState(query.name);
 
-  async function onRunClicked(query: Query) {
-    await updateCurrentTabUrlAndForceReload(query.url);
-  }
-
-  async function onDeleteClicked(query: Query) {
-    await deleteQuery(query);
-  }
-
   async function saveQueryName() {
     await updateQuery({
       ...query,
       name: nameValue,
     });
     setIsEditing(false);
-  }
-
-  async function onFavoriteClicked(query: Query) {
-    await updateQuery({
-      ...query,
-      favorite: !query.favorite,
-    });
   }
 
   const parsed = parseDynamoDbConsoleUrl(query.url);
@@ -85,21 +67,7 @@ export default function QueryListItem({ query }: Props) {
             )}
             <div className="text-muted-foreground text-xs lowercase">{new Date(query.createdAt).toLocaleString()}</div>
           </div>
-          <div className="flex items-center gap-1">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <StarIcon
-                    className={cn("h-5 w-5 transition-all cursor-pointer", query.favorite ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground")}
-                    onClick={async () => await onFavoriteClicked(query)}
-                  />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <span>{query.favorite ? "Remove from favorites" : "Add to favorites"}</span>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
+          <QueryListItemButtonGroup query={query} />
         </div>
       </CardHeader>
 
@@ -125,56 +93,6 @@ export default function QueryListItem({ query }: Props) {
           </div>
         </CardContent>
       )}
-
-      <CardFooter>
-        <div className="flex items-center gap-2 w-full justify-end">
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="default" size="icon" onClick={() => onRunClicked(query)}>
-                  <PlayIcon className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <span>Run query</span>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-
-          <Dialog>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <DialogTrigger asChild>
-                    <Button variant="destructive" size="icon">
-                      <Trash2Icon className="h-4 w-4" />
-                    </Button>
-                  </DialogTrigger>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <span>Delete query</span>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Are you absolutely sure?</DialogTitle>
-                <DialogDescription>This action cannot be undone. This will permanently delete the query.</DialogDescription>
-              </DialogHeader>
-              <DialogFooter>
-                <DialogClose asChild>
-                  <Button variant="secondary">Cancel</Button>
-                </DialogClose>
-                <DialogClose asChild>
-                  <Button variant="destructive" onClick={async () => await onDeleteClicked(query)}>
-                    Delete
-                  </Button>
-                </DialogClose>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        </div>
-      </CardFooter>
     </Card>
   );
 }

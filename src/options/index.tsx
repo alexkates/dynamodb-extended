@@ -8,6 +8,7 @@ import { Skeleton } from "src/components/ui/skeleton";
 import { ThemeProvider } from "src/components/theme-provider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "src/components/ui/select";
 import type { Theme } from "src/types/theme";
+import PageTitle from "src/components/page-title";
 
 function Index() {
   const [unmarshalledJsonOption, setUnmarshalledJsonOption, { isLoading: isUnmarshalledJsonOptionLoading }] = useStorage<boolean>(OptionKey.UNMARSHALLED_JSON);
@@ -88,7 +89,7 @@ function Index() {
   return (
     <ThemeProvider>
       <div className="container flex flex-col py-8 gap-4">
-        <h1 className="text-3xl font-semibold">DynamoDB Extended Options</h1>
+        <PageTitle subtitle="Options" />
         {isLoading ? loadingContent : loadedContent}
       </div>
     </ThemeProvider>

@@ -46,11 +46,11 @@ export function QueryListItemButtonGroup({ query }: Props) {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuItem onClick={() => onFavoriteClicked(query)}>
-            <StarIcon className={cn("mr-2 h-4 w-4", query.favorite ? "fill-black" : "fill-none")} />
+            <StarIcon className="h-4 w-4" />
             {!query.favorite ? "Add to favorites" : "Remove from favorites"}
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setShowDeleteDialog(true)} className="text-destructive focus:text-destructive">
-            <Trash className="mr-2 h-4 w-4" />
+          <DropdownMenuItem onClick={() => setShowDeleteDialog(true)}>
+            <Trash className="h-4 w-4" />
             Delete
           </DropdownMenuItem>
         </DropdownMenuContent>
@@ -63,12 +63,14 @@ export function QueryListItemButtonGroup({ query }: Props) {
             <DialogDescription>This action cannot be undone.</DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button size="sm" variant="outline" onClick={() => setShowDeleteDialog(false)}>
-              Cancel
-            </Button>
-            <Button size="sm" variant="destructive" onClick={() => onDeleteConfirmClicked(query)}>
-              Delete
-            </Button>
+            <div className="flex flex-col gap-2">
+              <Button size="sm" variant="outline" onClick={() => setShowDeleteDialog(false)}>
+                Cancel
+              </Button>
+              <Button size="sm" variant="destructive" onClick={() => onDeleteConfirmClicked(query)}>
+                Delete
+              </Button>
+            </div>
           </DialogFooter>
         </DialogContent>
       </Dialog>

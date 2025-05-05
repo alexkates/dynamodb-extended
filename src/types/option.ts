@@ -1,11 +1,10 @@
 export type Option = {
   key: OptionKey;
-  name: string;
-  description: string;
   value: string | boolean;
 };
 
 export enum OptionKey {
-  UNMARSHALLED_JSON = "UNMARSHALLED_JSON",
-  ITEM_EDITOR_HEIGHT = "ITEM_EDITOR_HEIGHT",
+  UNMARSHALLED_JSON = "dynamodb-extended-unmarshalled-json",
+  ITEM_EDITOR_HEIGHT = "dynamodb-extended-item-editor-height",
+  THEME = "dynamodb-extended-theme",
 }

@@ -6,6 +6,7 @@ import QueryList from "src/components/query-list";
 import { sortQueryByDate } from "src/utils/sort";
 import { Button } from "src/components/ui/button";
 import { Settings } from "lucide-react";
+import { ThemeProvider } from "src/components/theme-provider";
 
 function Index() {
   const [queries] = useStorage<Query[]>(QUERY_KEY);
@@ -17,16 +18,18 @@ function Index() {
   }
 
   return (
-    <div className="container flex flex-col py-8 gap-4">
-      <div className="flex items-center justify-between">
-        <h1 className="text-lg font-semibold">DynamoDB Extended</h1>
-        <Button variant="ghost" onClick={onSettingsClicked} size={"sm"}>
-          <Settings className="mr-2 h-4 w-4" />
-          Settings
-        </Button>
+    <ThemeProvider>
+      <div className="container flex flex-col py-8 gap-4">
+        <div className="flex items-center justify-between">
+          <h1 className="text-lg font-semibold">DynamoDB Extended</h1>
+          <Button variant="ghost" onClick={onSettingsClicked} size={"sm"}>
+            <Settings className="mr-2 h-4 w-4" />
+            Settings
+          </Button>
+        </div>
+        <QueryList queries={queries} />
       </div>
-      <QueryList queries={queries} />
-    </div>
+    </ThemeProvider>
   );
 }
 

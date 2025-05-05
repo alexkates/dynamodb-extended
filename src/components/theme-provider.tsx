@@ -1,11 +1,10 @@
 import { useStorage } from "@plasmohq/storage/hook";
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect } from "react";
 import type { Theme } from "src/types/theme";
+import { OptionKey } from "src/types/option";
 
 type ThemeProviderProps = {
   children: React.ReactNode;
-  defaultTheme?: Theme;
-  storageKey?: string;
 };
 
 type ThemeProviderState = {
@@ -20,11 +19,11 @@ const initialState: ThemeProviderState = {
 
 const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
 
-export function ThemeProvider({ children, defaultTheme = "system", storageKey = "dynamodb-extended-theme", ...props }: ThemeProviderProps) {
-  const [theme, setTheme] = useStorage<Theme>(storageKey, (v) => v ?? defaultTheme);
+export function ThemeProvider({ children }: ThemeProviderProps) {
+  const [theme, setTheme, { isLoading: isThemeLoading }] = useStorage<Theme>(OptionKey.THEME);
 
   useEffect(() => {
-    if (!theme) return;
+    if (isThemeLoading || !theme) return;
 
     const root = window.document.documentElement;
 
@@ -38,18 +37,14 @@ export function ThemeProvider({ children, defaultTheme = "system", storageKey = 
     }
 
     root.classList.add(theme);
-  }, [theme]);
+  }, [theme, isThemeLoading]);
 
   const value = {
     theme,
     setTheme,
   };
 
-  return (
-    <ThemeProviderContext.Provider {...props} value={value}>
-      {children}
-    </ThemeProviderContext.Provider>
-  );
+  return <ThemeProviderContext.Provider value={value}>{children}</ThemeProviderContext.Provider>;
 }
 
 export const useTheme = () => {

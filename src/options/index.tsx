@@ -1,28 +1,20 @@
 import "src/main.css";
 import { useStorage } from "@plasmohq/storage/hook";
-import { OPTION_KEY, updateOption } from "src/db/option";
-import type { Option } from "src/types/option";
+import { OptionKey } from "src/types/option";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "src/components/ui/card";
 import { Switch } from "src/components/ui/switch";
-import { Label } from "src/components/ui/label";
 import { Input } from "src/components/ui/input";
 import { Skeleton } from "src/components/ui/skeleton";
 import { ThemeProvider } from "src/components/theme-provider";
-import ThemeToggle from "src/components/theme-toggle";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "src/components/ui/select";
+import type { Theme } from "src/types/theme";
 
 function Index() {
-  const [options] = useStorage<Option[]>(OPTION_KEY);
+  const [unmarshalledJsonOption, setUnmarshalledJsonOption, { isLoading: isUnmarshalledJsonOptionLoading }] = useStorage<boolean>(OptionKey.UNMARSHALLED_JSON);
+  const [itemEditorHeightOption, setItemEditorHeightOption, { isLoading: isItemEditorHeightOptionLoading }] = useStorage<string>(OptionKey.ITEM_EDITOR_HEIGHT);
+  const [themeOption, setThemeOption, { isLoading: isThemeOptionLoading }] = useStorage<Theme>(OptionKey.THEME);
 
-  async function onOptionChanged(option?: Option) {
-    if (!option) return;
-
-    await updateOption(option);
-  }
-
-  const unmarshalledJsonOption = options?.find((option) => option.key === "UNMARSHALLED_JSON");
-  const itemEditorHeightOption = options?.find((option) => option.key === "ITEM_EDITOR_HEIGHT");
-
-  const isLoading = !unmarshalledJsonOption || !itemEditorHeightOption;
+  const isLoading = isUnmarshalledJsonOptionLoading || isItemEditorHeightOptionLoading || isThemeOptionLoading;
 
   const loadingContent = (
     <>
@@ -54,31 +46,40 @@ function Index() {
     <>
       <Card>
         <CardHeader>
-          <CardTitle>{unmarshalledJsonOption?.name}</CardTitle>
-          <CardDescription>{unmarshalledJsonOption?.description}</CardDescription>
+          <CardTitle>Unmarshalled JSON</CardTitle>
+          <CardDescription>Changes the default DynamoDB Edit Item screen to unmarshalled JSON.</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center space-x-2">
-            <Switch id={unmarshalledJsonOption?.key} checked={!!unmarshalledJsonOption?.value} onCheckedChange={(e) => onOptionChanged({ ...unmarshalledJsonOption!, value: e })} />
-            <Label htmlFor={unmarshalledJsonOption?.key}>{unmarshalledJsonOption?.value ? "Enabled" : "Disabled"}</Label>
-          </div>
+          <Switch checked={!!unmarshalledJsonOption} onCheckedChange={setUnmarshalledJsonOption} />
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader>
-          <CardTitle>{itemEditorHeightOption?.name}</CardTitle>
-          <CardDescription>{itemEditorHeightOption?.description}</CardDescription>
+          <CardTitle>Item Editor Height</CardTitle>
+          <CardDescription>Changes the default height of the Item Editor screen.</CardDescription>
         </CardHeader>
         <CardContent>
-          <Input
-            id={itemEditorHeightOption?.key}
-            className="max-w-xs"
-            type="text"
-            value={itemEditorHeightOption?.value as string}
-            onChange={(e) => onOptionChanged({ ...itemEditorHeightOption!, value: e.target.value })}
-            placeholder="e.g. 800px"
-          />
+          <Input className="max-w-xs" type="text" value={itemEditorHeightOption as string} onChange={(e) => setItemEditorHeightOption(e.target.value)} placeholder="e.g. 800px" />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Theme</CardTitle>
+          <CardDescription>Changes the default theme of the extension.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Select defaultValue={themeOption} onValueChange={(value) => setThemeOption(value as Theme)} value={themeOption}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Theme" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="light">Light</SelectItem>
+              <SelectItem value="dark">Dark</SelectItem>
+              <SelectItem value="system">System</SelectItem>
+            </SelectContent>
+          </Select>
         </CardContent>
       </Card>
     </>
@@ -88,7 +89,6 @@ function Index() {
     <ThemeProvider>
       <div className="container flex flex-col py-8 gap-4">
         <h1 className="text-3xl font-semibold">DynamoDB Extended Options</h1>
-        <ThemeToggle />
         {isLoading ? loadingContent : loadedContent}
       </div>
     </ThemeProvider>

@@ -1,26 +1,22 @@
-import { saveOption } from "src/db/option";
-import { OptionKey, type Option } from "src/types/option";
+import { OptionKey } from "src/types/option";
+import { Storage } from "@plasmohq/storage";
 
-chrome.runtime.onInstalled.addListener(async () => {
+initialize();
+
+async function initialize() {
   await chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });
+  await setDefaultOptionsIfNotSet();
+}
 
-  const defaultOptions: Option[] = [
-    {
-      key: OptionKey.UNMARSHALLED_JSON,
-      value: false,
-      name: "Unmarshalled JSON",
-      description: "Changes the default DynamoDB Edit Item screen to unmarshalled JSON.",
-    },
-    {
-      key: OptionKey.ITEM_EDITOR_HEIGHT,
-      value: "800px",
-      name: "Item Editor Height",
-      description: "Changes the default height of the Item Editor screen.",
-    },
-  ];
+async function setDefaultOptionsIfNotSet() {
+  const storage = new Storage();
 
-  defaultOptions.forEach(async (option) => {
-    await saveOption(option);
-    console.log("Saved option:", option);
-  });
-});
+  const unmarshalledJsonOption = await storage.get(OptionKey.UNMARSHALLED_JSON);
+  if (unmarshalledJsonOption === undefined) await storage.set(OptionKey.UNMARSHALLED_JSON, false);
+
+  const itemEditorHeightOption = await storage.get(OptionKey.ITEM_EDITOR_HEIGHT);
+  if (itemEditorHeightOption === undefined) await storage.set(OptionKey.ITEM_EDITOR_HEIGHT, "70vh");
+
+  const themeOption = await storage.get(OptionKey.THEME);
+  if (themeOption === undefined) await storage.set(OptionKey.THEME, "system");
+}

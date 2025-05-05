@@ -14,7 +14,7 @@ function getInstance() {
 export async function saveQuery(url: string) {
   const queries = await getQueries();
 
-  const queryExists = queries.some((query) => query.url === url);
+  const queryExists = !!queries.find((query) => query.url === url);
   if (queryExists) return;
 
   const newQuery: Query = {
@@ -30,7 +30,7 @@ export async function saveQuery(url: string) {
   await storage.set(QUERY_KEY, queries);
 }
 
-export async function getQueries() {
+async function getQueries() {
   const storage = getInstance();
   const queries = await storage.get<Query[]>(QUERY_KEY);
 

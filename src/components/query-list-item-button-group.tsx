@@ -1,22 +1,18 @@
 "use client";
 
 import { Button } from "src/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "src/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "src/components/ui/dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "src/components/ui/dropdown-menu";
-import { ChevronDown, PlayIcon, SaveIcon, StarIcon, Trash } from "lucide-react";
+import { ChevronDown, PlayIcon, StarIcon, Trash } from "lucide-react";
 import type { Query } from "src/types/query";
-import { useState } from "react";
 import { deleteQuery, updateQuery } from "src/db/query";
 import { updateCurrentTabUrlAndForceReload } from "src/utils/tabs";
-import { cn } from "src/utils";
 
 type Props = {
   query: Query;
 };
 
 export function QueryListItemButtonGroup({ query }: Props) {
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-
   async function onRunClicked(query: Query) {
     await updateCurrentTabUrlAndForceReload(query.url);
   }
@@ -28,7 +24,6 @@ export function QueryListItemButtonGroup({ query }: Props) {
   }
   async function onDeleteConfirmClicked(query: Query) {
     await deleteQuery(query);
-    setShowDeleteDialog(false);
   }
 
   return (
@@ -38,40 +33,37 @@ export function QueryListItemButtonGroup({ query }: Props) {
         Run
       </Button>
 
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button size="sm" variant="default" className="rounded-l-none px-2">
-            <ChevronDown className="h-4 w-4" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem onClick={() => onFavoriteClicked(query)}>
-            <StarIcon className="h-4 w-4" />
-            {!query.favorite ? "Add to favorites" : "Remove from favorites"}
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setShowDeleteDialog(true)}>
-            <Trash className="h-4 w-4" />
-            Delete
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <Dialog>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button size="sm" variant="default" className="rounded-l-none px-2">
+              <ChevronDown className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={() => onFavoriteClicked(query)}>
+              <StarIcon className="h-4 w-4" />
+              {!query.favorite ? "Add to favorites" : "Remove from favorites"}
+            </DropdownMenuItem>
+            <DialogTrigger className="w-full">
+              <DropdownMenuItem>
+                <Trash className="h-4 w-4" />
+                Delete
+              </DropdownMenuItem>
+            </DialogTrigger>
+          </DropdownMenuContent>
+        </DropdownMenu>
 
-      <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Are you sure you want to delete?</DialogTitle>
             <DialogDescription>This action cannot be undone.</DialogDescription>
           </DialogHeader>
-          <DialogFooter>
-            <div className="flex flex-col gap-2">
-              <Button size="sm" variant="outline" onClick={() => setShowDeleteDialog(false)}>
-                Cancel
-              </Button>
-              <Button size="sm" variant="destructive" onClick={() => onDeleteConfirmClicked(query)}>
-                Delete
-              </Button>
-            </div>
-          </DialogFooter>
+          <div className="flex flex-col gap-2">
+            <Button size="sm" variant="destructive" onClick={() => onDeleteConfirmClicked(query)}>
+              Delete
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
     </div>

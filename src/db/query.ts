@@ -14,20 +14,28 @@ function getInstance() {
 export async function saveQuery(url: string) {
   const queries = await getQueries();
 
-  const queryExists = !!queries.find((query) => query.url === url);
-  if (queryExists) return;
+  // Filter out the existing query if it exists
+  const existingQuery = queries.find((query) => query.url === url);
+  const filteredQueries = queries.filter((query) => query.url !== url);
 
-  const newQuery: Query = {
-    url,
-    createdAt: Date.now(),
-    name: "A DynamoDB Query",
-    favorite: false,
-  };
+  // Create new query or update existing one
+  const newQuery: Query = existingQuery
+    ? {
+        ...existingQuery,
+        createdAt: Date.now(), // Update timestamp to move it to the top
+      }
+    : {
+        url,
+        createdAt: Date.now(),
+        name: "A DynamoDB Query",
+        favorite: false,
+      };
 
-  queries.unshift(newQuery);
+  // Add to the beginning of the array
+  filteredQueries.unshift(newQuery);
 
   const storage = getInstance();
-  await storage.set(QUERY_KEY, queries);
+  await storage.set(QUERY_KEY, filteredQueries);
 }
 
 async function getQueries() {

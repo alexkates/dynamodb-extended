@@ -1,21 +1,47 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { Query } from "src/types/query";
 import QueryListItem from "./query-list-item";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "./ui/tabs";
 import { filterQueryByFavorite } from "src/utils/filter";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
+import { getActiveTab, setActiveTab, type ActiveTab } from "src/db/active-tab";
 
 interface Props {
   queries?: Query[];
 }
 
 export default function QueryList({ queries }: Props) {
-  const [activeTab, setActiveTab] = useState<"recent" | "favorites">("recent");
+  const [activeTab, setActiveTabState] = useState<ActiveTab>("recent");
   const favoriteQueries = queries?.filter(filterQueryByFavorite);
+
+  // Load the active tab from storage on component mount
+  useEffect(() => {
+    const loadActiveTab = async () => {
+      try {
+        const savedTab = await getActiveTab();
+        setActiveTabState(savedTab);
+      } catch (error) {
+        console.error("Failed to load active tab from storage:", error);
+      }
+    };
+
+    loadActiveTab();
+  }, []);
+
+  // Save the active tab to storage when it changes
+  const handleTabChange = async (value: string) => {
+    const newTab = value as ActiveTab;
+    setActiveTabState(newTab);
+    try {
+      await setActiveTab(newTab);
+    } catch (error) {
+      console.error("Failed to save active tab to storage:", error);
+    }
+  };
 
   return (
     <div className="flex flex-col gap-2">
-      <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "recent" | "favorites")}>
+      <Tabs value={activeTab} onValueChange={handleTabChange}>
         <TabsList className="w-full">
           <TabsTrigger value="recent" className="flex-1">
             Recent

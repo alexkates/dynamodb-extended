@@ -1,5 +1,3 @@
-import { waitForElement } from "src/utils/dom";
-
-export async function waitForRunButton() {
-  return waitForElement<HTMLButtonElement>('button[data-testid="run-filter"]');
+export function getRunButton() {
+  return document.querySelector<HTMLButtonElement>('button[data-testid="run-filter"]');
 }

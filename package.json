@@ -1,8 +1,8 @@
 {
   "name": "dynamodb-extended",
-  "displayName": "DynamoDB Extended",
-  "version": "1.0.0",
-  "description": "A Chrome extension to extend the functionality of the DynamoDB console.",
+  "displayName": "DynamoDB Extended - Query History, Favorites, and Better Defaults",
+  "version": "1.0.2",
+  "description": "Save and replay queries, auto-unmarshall JSON, and customize your DynamoDB item editor.",
   "author": "alexkates",
   "scripts": {
     "dev": "plasmo dev",
